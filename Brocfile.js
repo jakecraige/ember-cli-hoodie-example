@@ -17,4 +17,12 @@ var app = new EmberApp();
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
 
+app.import({
+  development: 'bower_components/hoodie/dist/hoodie.js',
+  production: 'bower_components/hoodie/dist/hoodie.min.js'
+});
+
+// Use vendor version instead of bower so we can make our custom modifications
+app.import('vendor/ember-hoodie-adapter/ember-hoodie-adapter.js');
+
 module.exports = app.toTree();
