@@ -7,6 +7,8 @@
 # dependencies
 /node_modules
 /bower_components
+/hoodie/node_modules
+/hoodie/bower_components
 
 # misc
 /.sass-cache

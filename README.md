@@ -4,12 +4,15 @@ This README outlines the details of collaborating on this Ember application.
 
 A short introduction of this app could easily go here.
 
+Hoodie password is `password`
+
 ## Prerequisites
 
 You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) (with NPM) and [Bower](http://bower.io/)
+* Hoodie
 
 ## Installation
 
@@ -21,6 +24,7 @@ You will need the following things properly installed on your computer.
 ## Running / Development
 
 * `ember server`
+* `cd hoodie && hoodie start`
 * Visit your app at http://localhost:4200.
 
 ### Code Generators
