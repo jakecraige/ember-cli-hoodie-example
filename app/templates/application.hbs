@@ -1,3 +1,34 @@
 <h2 id='title'>Welcome to Ember.js</h2>
 
+{{#if accountService.hasValidSession}}
+  <button {{action 'signOut'}}>
+    Sign Out
+  </button>
+
+  <ul>
+    {{#each}}
+    <li>
+      {{text}}
+      -
+      <button {{action 'destroyTodo' this}}>
+        destroy
+      </button>
+    </li>
+    {{else}}
+    <li>
+      No todos
+    </li>
+    {{/each}}
+  </ul>
+
+  <form {{action 'createTodo' on='submit'}}>
+    {{input value=text}}
+  </form>
+{{else}}
+  <button {{action 'signIn'}}>
+    Sign In
+  </button>
+{{/if}}
+
 {{outlet}}
+

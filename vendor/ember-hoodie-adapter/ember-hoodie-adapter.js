@@ -4,48 +4,72 @@
 (function () {
   'use strict';
 
-  function wrapJqueryPromise(jQueryPromise) {
-    console.log('wrap jquery promise');
-    console.log((new Error()).stack)
+  function wrapJqueryPromise(type, jQueryPromise) {
     return new Ember.RSVP.Promise(function(resolve, reject) {
       jQueryPromise.then(function(json) {
-        Ember.run(null, resolve, json);
+        Ember.run(null, resolve, serialize(type, json));
       }, function(error) {
         Ember.run(null, reject, error);
       });
     });
   }
 
-  DS.HoodieAdapter = DS.Adapter.extend({
+  function serialize(type, payload) {
+    var response = {};
 
+    if(Ember.isArray(payload)) {
+      type = Ember.String.pluralize(type);
+    }
+
+    response[type] = payload;
+    return response;
+  }
+
+  DS.HoodieAdapter = DS.Adapter.extend({
+    defaultSerializer: '-active-model',
     init: function() {
-      hoodie.remote.on('change', function() {
-        console.log('handle change!', arguments)
+      var store = this.container.lookup('store:main');
+      hoodie.remote.on('change', function(event, payload) {
+        if (!payload || !payload.type) {
+          return;
+        }
+
+        if (event === 'update' || event === 'add') {
+          store.pushPayload(payload.type, serialize(payload.type, payload));
+        } else if (event === 'remove') {
+          var record = store.getById(payload.type, payload.id);
+          if (record) {
+            record.unloadRecord();
+          }
+        }
       });
     },
 
     find: function(store, type, id/*, opts*/) {
-      console.log('find calleddddd');
-      return wrapJqueryPromise( hoodie.store.find(type.typeKey, id) );
-
+      return wrapJqueryPromise(type.typeKey, hoodie.store.find(type.typeKey, id) );
     },
 
     findAll: function (store, type) {
-      return wrapJqueryPromise( hoodie.store.findAll(type.typeKey) );
-
+      return wrapJqueryPromise(type.typeKey, hoodie.store.findAll(type.typeKey) );
     },
 
     createRecord: function (store, type, record) {
-      console.log('hoodie create record');
-      return wrapJqueryPromise( hoodie.store.add(type.typeKey, record.toJSON()) );
+      return wrapJqueryPromise(type.typeKey, hoodie.store.add(type.typeKey, record.toJSON()) );
     },
 
     updateRecord: function (store, type, record) {
-      return wrapJqueryPromise( hoodie.store.update(type.typeKey, record.id, record.toJSON()) );
+      return wrapJqueryPromise(type.typeKey, hoodie.store.update(type.typeKey, record.id, record.toJSON()) );
     },
 
     deleteRecord: function (store, type, record) {
-      return wrapJqueryPromise( hoodie.store.remove(type.typeKey, record.id) );
+      return wrapJqueryPromise(type.typeKey, hoodie.store.remove(type.typeKey, record.id) );
     }
+  });
+
+  DS.HoodieModel = DS.Model.extend({
+    _rev:      DS.attr('string'),
+    createdAt: DS.attr('date'),
+    updatedAt: DS.attr('date'),
+    createdBy: DS.attr('string')
   });
 }());
