@@ -7,14 +7,13 @@ export default Ember.Route.extend({
 
   actions: {
     createTodo: function() {
-      var text = this.get('controller.text');
-      var record = this.store.createRecord('todo', {text: text});
+      var ctrl   = this.get('controller');
+      var record = this.store.createRecord('todo', {text: ctrl.get('text')});
 
       record.save().then(function() {
-        this.set('controller.text', '');
-      }.bind(this), function(err) {
-        alert('Error saving record');
-        console.log(err);
+        ctrl.set('text', '');
+      }, function(err) {
+        ctrl.setFlash(err.message);
       });
     },
 
@@ -23,20 +22,29 @@ export default Ember.Route.extend({
     },
 
     signIn: function() {
-      this.accountService.signIn('admin', 'password').then(function() {
-        alert('Signed in!');
-      }, function(err) {
-        alert('Error signing in');
-        console.log(err);
+      var ctrl     = this.get('controller');
+      var email    = ctrl.get('user.email');
+      var password = ctrl.get('user.password');
+
+      this.accountService.signIn(email, password).catch(function(err) {
+        ctrl.setFlash(err.message);
+      });
+    },
+
+    signUp: function() {
+      var ctrl     = this.get('controller');
+      var email    = ctrl.get('user.email');
+      var password = ctrl.get('user.password');
+
+      this.accountService.signUp(email, password).catch(function(err) {
+        ctrl.setFlash(err.message);
       });
     },
 
     signOut: function() {
-      this.accountService.signOut().then(function() {
-        alert('Signed out');
-      }, function(err) {
-        alert('Error signing out');
-        console.log(err);
+      var ctrl     = this.get('controller');
+      this.accountService.signOut().catch(function(err) {
+        ctrl.setFlash(err.message);
       });
     }
   }

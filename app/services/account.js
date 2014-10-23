@@ -1,5 +1,11 @@
 import Ember from 'ember';
 
+function wrapHoodiePromise(promise) {
+  return new Ember.RSVP.Promise(function(resolve, reject) {
+    promise.then(resolve, reject);
+  });
+}
+
 export default Ember.Object.extend({
   hasValidSession: false,
 
@@ -26,10 +32,14 @@ export default Ember.Object.extend({
   },
 
   signIn: function(username, password) {
-    return hoodie.account.signIn(username, password);
+    return wrapHoodiePromise(hoodie.account.signIn(username, password));
+  },
+
+  signUp: function(username, password) {
+    return wrapHoodiePromise(hoodie.account.signUp(username, password));
   },
 
   signOut: function(options) {
-    return hoodie.account.signOut(options);
+    return wrapHoodiePromise(hoodie.account.signOut(options));
   }
 });

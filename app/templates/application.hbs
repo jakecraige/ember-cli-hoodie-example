@@ -1,4 +1,6 @@
-<h2 id='title'>Welcome to Ember.js</h2>
+{{#if flash}}
+  <h2>{{flash}}</h2>
+{{/if}}
 
 {{#if accountService.hasValidSession}}
   <button {{action 'signOut'}}>
@@ -25,9 +27,26 @@
     {{input value=text}}
   </form>
 {{else}}
-  <button {{action 'signIn'}}>
-    Sign In
-  </button>
+  <div>
+    <div>
+      <label for="email">
+        Email
+      </label>
+      {{input value=user.email id="email"}}
+    </div>
+    <div>
+      <label for="password">
+        Password
+      </label>
+      {{input value=user.password id="password" type="password"}}
+    </div>
+    <button {{action 'signUp'}}>
+      Sign Up
+    </button>
+    <button {{action 'signIn'}}>
+      Sign In
+    </button>
+  </div>
 {{/if}}
 
 {{outlet}}
