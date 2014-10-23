@@ -34,6 +34,11 @@
           return;
         }
 
+        // Ignore _design
+        if(payload.type[0] === '_') {
+          return;
+        }
+
         if (event === 'update' || event === 'add') {
           store.pushPayload(payload.type, serialize(payload.type, payload));
         } else if (event === 'remove') {
