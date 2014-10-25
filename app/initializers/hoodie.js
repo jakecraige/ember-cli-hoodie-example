@@ -1,7 +1,8 @@
+import config from '../config/environment';
+
 export function initialize(/* container, application */) {
-  // application.inject('route', 'foo', 'service:foo');
-  window.hoodie = new Hoodie('http://localhost:6007');
-};
+  window.hoodie = new Hoodie(config.hoodieURL);
+}
 
 export default {
   name: 'hoodie',

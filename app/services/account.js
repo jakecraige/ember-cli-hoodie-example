@@ -14,6 +14,10 @@ export default Ember.Object.extend({
       this._setSession();
     });
 
+    Ember.run.later(this, function() {
+      this._setSession();
+    }, 5000);
+
     var auth = this;
 
     hoodie.account.on('authenticated signin signup', function(user) {
